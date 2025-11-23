@@ -19,8 +19,8 @@ local Theme = {
 function Robox.new(config)
     local self = setmetatable({}, Robox)
     self.Theme = Theme
-    self.Title = tostring(config.Title or "Interface")
-    self.Subtitle = tostring(config.Subtitle or "Modern UI")
+    self.Title = config.Title
+    self.Subtitle = config.Subtitle
     self.Minimized = false
     self.Visible = true
     self.Tabs = {}
@@ -83,7 +83,7 @@ function Robox:CreateTopBar()
     TitleLabel.Size = UDim2.new(0, 180, 0, 18)
     TitleLabel.Position = UDim2.new(0, 16, 0, 8)
     TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Text = tostring(self.Title)
+    TitleLabel.Text = self.Title
     TitleLabel.TextColor3 = self.Theme.Text
     TitleLabel.TextSize = 14
     TitleLabel.Font = Enum.Font.GothamMedium
@@ -94,7 +94,7 @@ function Robox:CreateTopBar()
     SubtitleLabel.Size = UDim2.new(0, 180, 0, 14)
     SubtitleLabel.Position = UDim2.new(0, 16, 0, 26)
     SubtitleLabel.BackgroundTransparency = 1
-    SubtitleLabel.Text = tostring(self.Subtitle)
+    SubtitleLabel.Text = self.Subtitle
     SubtitleLabel.TextColor3 = self.Theme.TextSecondary
     SubtitleLabel.TextSize = 11
     SubtitleLabel.Font = Enum.Font.Gotham
@@ -252,7 +252,7 @@ function Robox:CreateToggleButton()
 end
 
 function Robox:AddTab(config)
-    local tabName = tostring(config.Name or "Tab")
+    local tabName = config.Name
     
     local TabButton = Instance.new("TextButton")
     TabButton.Name = tabName
@@ -375,7 +375,7 @@ function Robox:SelectTab(tabName)
 end
 
 function Robox:AddSection(parent, config)
-    local sectionName = tostring(config.Name or "Section")
+    local sectionName = config.Name
     
     local Section = Instance.new("Frame")
     Section.Name = "Section"
@@ -397,7 +397,7 @@ function Robox:AddSection(parent, config)
 end
 
 function Robox:AddToggle(parent, config)
-    local toggleName = tostring(config.Name or "Toggle")
+    local toggleName = config.Name
     
     local ToggleFrame = Instance.new("Frame")
     ToggleFrame.Name = "Toggle"
@@ -444,7 +444,7 @@ function Robox:AddToggle(parent, config)
     ToggleSliderCorner.CornerRadius = UDim.new(1, 0)
     ToggleSliderCorner.Parent = ToggleSlider
     
-    local toggled = config.Default or false
+    local toggled = config.Default
     
     local function UpdateToggle()
         if toggled then
@@ -486,7 +486,7 @@ function Robox:AddToggle(parent, config)
 end
 
 function Robox:AddButton(parent, config)
-    local buttonName = tostring(config.Name or "Button")
+    local buttonName = config.Name
     
     local ButtonFrame = Instance.new("TextButton")
     ButtonFrame.Name = "Button"
@@ -541,9 +541,9 @@ function Robox:AddButton(parent, config)
 end
 
 function Robox:AddDropdown(parent, config)
-    local dropdownName = tostring(config.Name or "Dropdown")
-    local options = config.Options or {"Option 1"}
-    local defaultValue = tostring(config.Default or options[1])
+    local dropdownName = config.Name
+    local options = config.Options
+    local defaultValue = config.Default
     
     local DropdownFrame = Instance.new("Frame")
     DropdownFrame.Name = "Dropdown"
@@ -611,8 +611,6 @@ function Robox:AddDropdown(parent, config)
     local selectedValue = defaultValue
     
     for i, option in ipairs(options) do
-        local optionStr = tostring(option)
-        
         local OptionButton = Instance.new("TextButton")
         OptionButton.Size = UDim2.new(1, -8, 0, 30)
         OptionButton.Position = UDim2.new(0, 4, 0, 0)
@@ -629,7 +627,7 @@ function Robox:AddDropdown(parent, config)
         OptionLabel.Size = UDim2.new(1, -16, 1, 0)
         OptionLabel.Position = UDim2.new(0, 8, 0, 0)
         OptionLabel.BackgroundTransparency = 1
-        OptionLabel.Text = optionStr
+        OptionLabel.Text = option
         OptionLabel.TextColor3 = self.Theme.Text
         OptionLabel.TextSize = 11
         OptionLabel.Font = Enum.Font.Gotham
@@ -655,12 +653,12 @@ function Robox:AddDropdown(parent, config)
         end)
         
         OptionButton.MouseButton1Click:Connect(function()
-            selectedValue = optionStr
-            DropdownValue.Text = optionStr
+            selectedValue = option
+            DropdownValue.Text = option
             
             if config.Callback then
                 pcall(function()
-                    config.Callback(optionStr)
+                    config.Callback(option)
                 end)
             end
             
@@ -696,13 +694,12 @@ function Robox:AddDropdown(parent, config)
     
     return {
         SetValue = function(value)
-            local valueStr = tostring(value)
-            selectedValue = valueStr
-            DropdownValue.Text = valueStr
+            selectedValue = value
+            DropdownValue.Text = value
             
             if config.Callback then
                 pcall(function()
-                    config.Callback(valueStr)
+                    config.Callback(value)
                 end)
             end
         end
@@ -710,11 +707,11 @@ function Robox:AddDropdown(parent, config)
 end
 
 function Robox:AddSlider(parent, config)
-    local sliderName = tostring(config.Name or "Slider")
-    local minValue = tonumber(config.Min) or 0
-    local maxValue = tonumber(config.Max) or 100
-    local defaultValue = tonumber(config.Default) or minValue
-    local increment = tonumber(config.Increment) or 1
+    local sliderName = config.Name
+    local minValue = config.Min
+    local maxValue = config.Max
+    local defaultValue = config.Default
+    local increment = config.Increment
     
     local SliderFrame = Instance.new("Frame")
     SliderFrame.Name = "Slider"
@@ -840,7 +837,7 @@ function Robox:AddSlider(parent, config)
     
     return {
         SetValue = function(value)
-            currentValue = math.clamp(tonumber(value) or minValue, minValue, maxValue)
+            currentValue = math.clamp(value, minValue, maxValue)
             SliderValue.Text = tostring(currentValue)
             local percentage = (currentValue - minValue) / (maxValue - minValue)
             local fillSize = percentage * SliderBar.AbsoluteSize.X
@@ -857,9 +854,9 @@ function Robox:AddSlider(parent, config)
 end
 
 function Robox:Notify(config)
-    local notifTitle = tostring(config.Title or "Notification")
-    local notifText = tostring(config.Text or "")
-    local notifDuration = tonumber(config.Duration) or 3
+    local notifTitle = config.Title
+    local notifText = config.Text
+    local notifDuration = config.Duration
     
     local NotificationFrame = Instance.new("Frame")
     NotificationFrame.Name = "Notification"
