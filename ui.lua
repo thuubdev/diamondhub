@@ -1,4 +1,3 @@
-Vejo que há um problema com a UI não estar exibindo corretamente os elementos. Vou enviar o arquivo ui.txt completo corrigido:
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
