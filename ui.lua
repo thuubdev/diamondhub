@@ -1,3 +1,4 @@
+Vejo que há um problema com a UI não estar exibindo corretamente os elementos. Vou enviar o arquivo ui.txt completo corrigido:
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -26,9 +27,8 @@ function Robox.new(config)
     self.Tabs = {}
     self.Notifications = {}
     self:CreateScreenGui()
-    spawn(function()
-        self:ShowLoadingScreen()
-    end)
+    self:CreateWindow()
+    self:CreateToggleButton()
     return self
 end
 
@@ -46,88 +46,6 @@ function Robox:CreateScreenGui()
     end
 end
 
-function Robox:ShowLoadingScreen()
-    local LoadingFrame = Instance.new("Frame")
-    LoadingFrame.Name = "LoadingFrame"
-    LoadingFrame.Size = UDim2.new(0, 300, 0, 180)
-    LoadingFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
-    LoadingFrame.BackgroundColor3 = self.Theme.Background
-    LoadingFrame.BackgroundTransparency = 0
-    LoadingFrame.BorderSizePixel = 0
-    LoadingFrame.Parent = self.ScreenGui
-    
-    local LoadingCorner = Instance.new("UICorner")
-    LoadingCorner.CornerRadius = UDim.new(0, 12)
-    LoadingCorner.Parent = LoadingFrame
-    
-    local LoadingStroke = Instance.new("UIStroke")
-    LoadingStroke.Color = self.Theme.Border
-    LoadingStroke.Thickness = 1
-    LoadingStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    LoadingStroke.Parent = LoadingFrame
-    
-    local LoadingIcon = Instance.new("ImageLabel")
-    LoadingIcon.Size = UDim2.new(0, 60, 0, 60)
-    LoadingIcon.Position = UDim2.new(0.5, -30, 0, 30)
-    LoadingIcon.BackgroundTransparency = 1
-    LoadingIcon.Image = "rbxassetid://89292430794864"
-    LoadingIcon.ImageColor3 = self.Theme.Accent
-    LoadingIcon.Parent = LoadingFrame
-    
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Size = UDim2.new(1, -40, 0, 22)
-    TitleLabel.Position = UDim2.new(0, 20, 0, 100)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Text = "Diamond Hub"
-    TitleLabel.TextColor3 = self.Theme.Text
-    TitleLabel.TextSize = 16
-    TitleLabel.Font = Enum.Font.GothamMedium
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
-    TitleLabel.Parent = LoadingFrame
-    
-    local LoadingBarBG = Instance.new("Frame")
-    LoadingBarBG.Size = UDim2.new(1, -60, 0, 3)
-    LoadingBarBG.Position = UDim2.new(0, 30, 0, 140)
-    LoadingBarBG.BackgroundColor3 = self.Theme.Tertiary
-    LoadingBarBG.BorderSizePixel = 0
-    LoadingBarBG.Parent = LoadingFrame
-    
-    local BarCorner = Instance.new("UICorner")
-    BarCorner.CornerRadius = UDim.new(1, 0)
-    BarCorner.Parent = LoadingBarBG
-    
-    local LoadingBarFill = Instance.new("Frame")
-    LoadingBarFill.Size = UDim2.new(0, 0, 1, 0)
-    LoadingBarFill.BackgroundColor3 = self.Theme.Accent
-    LoadingBarFill.BorderSizePixel = 0
-    LoadingBarFill.Parent = LoadingBarBG
-    
-    local FillCorner = Instance.new("UICorner")
-    FillCorner.CornerRadius = UDim.new(1, 0)
-    FillCorner.Parent = LoadingBarFill
-    
-    local fillTween = TweenService:Create(LoadingBarFill, TweenInfo.new(2, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {
-        Size = UDim2.new(1, 0, 1, 0)
-    })
-    fillTween:Play()
-    
-    fillTween.Completed:Connect(function()
-        task.wait(0.2)
-        TweenService:Create(LoadingFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            BackgroundTransparency = 1
-        }):Play()
-        TweenService:Create(LoadingStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
-        TweenService:Create(TitleLabel, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-        TweenService:Create(LoadingIcon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-        TweenService:Create(LoadingBarBG, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        TweenService:Create(LoadingBarFill, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        task.wait(0.3)
-        LoadingFrame:Destroy()
-        self:CreateWindow()
-        self:CreateToggleButton()
-    end)
-end
-
 function Robox:CreateWindow()
     self.MainFrame = Instance.new("Frame")
     self.MainFrame.Name = "MainFrame"
@@ -135,7 +53,7 @@ function Robox:CreateWindow()
     self.MainFrame.Position = UDim2.new(0.5, -250, 0.5, -190)
     self.MainFrame.BackgroundColor3 = self.Theme.Background
     self.MainFrame.BorderSizePixel = 0
-    self.MainFrame.ClipsDescendants = true
+    self.MainFrame.ClipsDescendants = false
     self.MainFrame.Parent = self.ScreenGui
     
     local UICorner = Instance.new("UICorner")
@@ -154,107 +72,6 @@ function Robox:CreateWindow()
     self:MakeDraggable()
 end
 
-function Robox:ShowCloseConfirmation()
-    local ConfirmFrame = Instance.new("Frame")
-    ConfirmFrame.Name = "ConfirmFrame"
-    ConfirmFrame.Size = UDim2.new(0, 280, 0, 120)
-    ConfirmFrame.Position = UDim2.new(0.5, -140, 0.5, -60)
-    ConfirmFrame.BackgroundColor3 = self.Theme.Secondary
-    ConfirmFrame.BorderSizePixel = 0
-    ConfirmFrame.ZIndex = 100
-    ConfirmFrame.Parent = self.ScreenGui
-    
-    local ConfirmCorner = Instance.new("UICorner")
-    ConfirmCorner.CornerRadius = UDim.new(0, 10)
-    ConfirmCorner.Parent = ConfirmFrame
-    
-    local ConfirmStroke = Instance.new("UIStroke")
-    ConfirmStroke.Color = self.Theme.Border
-    ConfirmStroke.Thickness = 1
-    ConfirmStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    ConfirmStroke.Parent = ConfirmFrame
-    
-    local ConfirmTitle = Instance.new("TextLabel")
-    ConfirmTitle.Size = UDim2.new(1, 0, 0, 30)
-    ConfirmTitle.Position = UDim2.new(0, 0, 0, 15)
-    ConfirmTitle.BackgroundTransparency = 1
-    ConfirmTitle.Text = "Close UI"
-    ConfirmTitle.TextColor3 = self.Theme.Text
-    ConfirmTitle.TextSize = 14
-    ConfirmTitle.Font = Enum.Font.GothamMedium
-    ConfirmTitle.Parent = ConfirmFrame
-    
-    local CancelButton = Instance.new("TextButton")
-    CancelButton.Size = UDim2.new(0, 120, 0, 36)
-    CancelButton.Position = UDim2.new(0, 15, 1, -50)
-    CancelButton.BackgroundColor3 = self.Theme.Tertiary
-    CancelButton.BorderSizePixel = 0
-    CancelButton.Text = ""
-    CancelButton.Parent = ConfirmFrame
-    
-    local CancelCorner = Instance.new("UICorner")
-    CancelCorner.CornerRadius = UDim.new(0, 8)
-    CancelCorner.Parent = CancelButton
-    
-    local CancelIcon = Instance.new("ImageLabel")
-    CancelIcon.Size = UDim2.new(0, 18, 0, 18)
-    CancelIcon.Position = UDim2.new(0, 15, 0.5, -9)
-    CancelIcon.BackgroundTransparency = 1
-    CancelIcon.Image = "rbxassetid://115996516910269"
-    CancelIcon.ImageColor3 = self.Theme.Text
-    CancelIcon.Parent = CancelButton
-    
-    local CancelLabel = Instance.new("TextLabel")
-    CancelLabel.Size = UDim2.new(1, -40, 1, 0)
-    CancelLabel.Position = UDim2.new(0, 38, 0, 0)
-    CancelLabel.BackgroundTransparency = 1
-    CancelLabel.Text = "Cancel"
-    CancelLabel.TextColor3 = self.Theme.Text
-    CancelLabel.TextSize = 12
-    CancelLabel.Font = Enum.Font.Gotham
-    CancelLabel.TextXAlignment = Enum.TextXAlignment.Left
-    CancelLabel.Parent = CancelButton
-    
-    local ConfirmButton = Instance.new("TextButton")
-    ConfirmButton.Size = UDim2.new(0, 120, 0, 36)
-    ConfirmButton.Position = UDim2.new(1, -135, 1, -50)
-    ConfirmButton.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
-    ConfirmButton.BorderSizePixel = 0
-    ConfirmButton.Text = ""
-    ConfirmButton.Parent = ConfirmFrame
-    
-    local ConfirmCorner2 = Instance.new("UICorner")
-    ConfirmCorner2.CornerRadius = UDim.new(0, 8)
-    ConfirmCorner2.Parent = ConfirmButton
-    
-    local ConfirmIcon = Instance.new("ImageLabel")
-    ConfirmIcon.Size = UDim2.new(0, 18, 0, 18)
-    ConfirmIcon.Position = UDim2.new(0, 15, 0.5, -9)
-    ConfirmIcon.BackgroundTransparency = 1
-    ConfirmIcon.Image = "rbxassetid://99485429958746"
-    ConfirmIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-    ConfirmIcon.Parent = ConfirmButton
-    
-    local ConfirmLabel = Instance.new("TextLabel")
-    ConfirmLabel.Size = UDim2.new(1, -40, 1, 0)
-    ConfirmLabel.Position = UDim2.new(0, 38, 0, 0)
-    ConfirmLabel.BackgroundTransparency = 1
-    ConfirmLabel.Text = "Close"
-    ConfirmLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ConfirmLabel.TextSize = 12
-    ConfirmLabel.Font = Enum.Font.Gotham
-    ConfirmLabel.TextXAlignment = Enum.TextXAlignment.Left
-    ConfirmLabel.Parent = ConfirmButton
-    
-    CancelButton.MouseButton1Click:Connect(function()
-        ConfirmFrame:Destroy()
-    end)
-    
-    ConfirmButton.MouseButton1Click:Connect(function()
-        self.ScreenGui:Destroy()
-    end)
-end
-
 function Robox:CreateTopBar()
     local TopBar = Instance.new("Frame")
     TopBar.Name = "TopBar"
@@ -263,17 +80,9 @@ function Robox:CreateTopBar()
     TopBar.BorderSizePixel = 0
     TopBar.Parent = self.MainFrame
     
-    local TitleIcon = Instance.new("ImageLabel")
-    TitleIcon.Size = UDim2.new(0, 20, 0, 20)
-    TitleIcon.Position = UDim2.new(0, 16, 0, 8)
-    TitleIcon.BackgroundTransparency = 1
-    TitleIcon.Image = "rbxassetid://89292430794864"
-    TitleIcon.ImageColor3 = self.Theme.Accent
-    TitleIcon.Parent = TopBar
-    
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Size = UDim2.new(0, 180, 0, 18)
-    TitleLabel.Position = UDim2.new(0, 42, 0, 8)
+    TitleLabel.Position = UDim2.new(0, 16, 0, 8)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Text = tostring(self.Title)
     TitleLabel.TextColor3 = self.Theme.Text
@@ -284,7 +93,7 @@ function Robox:CreateTopBar()
     
     local SubtitleLabel = Instance.new("TextLabel")
     SubtitleLabel.Size = UDim2.new(0, 180, 0, 14)
-    SubtitleLabel.Position = UDim2.new(0, 42, 0, 26)
+    SubtitleLabel.Position = UDim2.new(0, 16, 0, 26)
     SubtitleLabel.BackgroundTransparency = 1
     SubtitleLabel.Text = tostring(self.Subtitle)
     SubtitleLabel.TextColor3 = self.Theme.TextSecondary
@@ -293,14 +102,16 @@ function Robox:CreateTopBar()
     SubtitleLabel.TextXAlignment = Enum.TextXAlignment.Left
     SubtitleLabel.Parent = TopBar
     
-    local CloseButton = Instance.new("ImageButton")
+    local CloseButton = Instance.new("TextButton")
     CloseButton.Size = UDim2.new(0, 28, 0, 28)
     CloseButton.Position = UDim2.new(1, -38, 0, 8)
     CloseButton.BackgroundColor3 = self.Theme.Tertiary
     CloseButton.BackgroundTransparency = 0
     CloseButton.BorderSizePixel = 0
-    CloseButton.Image = "rbxassetid://115996516910269"
-    CloseButton.ImageColor3 = self.Theme.Text
+    CloseButton.Text = "X"
+    CloseButton.TextColor3 = self.Theme.Text
+    CloseButton.TextSize = 14
+    CloseButton.Font = Enum.Font.GothamBold
     CloseButton.Parent = TopBar
     
     local CloseCorner = Instance.new("UICorner")
@@ -320,17 +131,19 @@ function Robox:CreateTopBar()
     end)
     
     CloseButton.MouseButton1Click:Connect(function()
-        self:ShowCloseConfirmation()
+        self.ScreenGui:Destroy()
     end)
     
-    local MinimizeButton = Instance.new("ImageButton")
+    local MinimizeButton = Instance.new("TextButton")
     MinimizeButton.Size = UDim2.new(0, 28, 0, 28)
     MinimizeButton.Position = UDim2.new(1, -72, 0, 8)
     MinimizeButton.BackgroundColor3 = self.Theme.Tertiary
     MinimizeButton.BackgroundTransparency = 0
     MinimizeButton.BorderSizePixel = 0
-    MinimizeButton.Image = "rbxassetid://134196154818547"
-    MinimizeButton.ImageColor3 = self.Theme.Text
+    MinimizeButton.Text = "-"
+    MinimizeButton.TextColor3 = self.Theme.Text
+    MinimizeButton.TextSize = 18
+    MinimizeButton.Font = Enum.Font.GothamBold
     MinimizeButton.Parent = TopBar
     
     local MinCorner = Instance.new("UICorner")
@@ -771,7 +584,7 @@ function Robox:AddDropdown(parent, config)
     DropdownArrow.Size = UDim2.new(0, 20, 0, 36)
     DropdownArrow.Position = UDim2.new(1, -28, 0, 0)
     DropdownArrow.BackgroundTransparency = 1
-    DropdownArrow.Text = "▼"
+    DropdownArrow.Text = "v"
     DropdownArrow.TextColor3 = self.Theme.TextSecondary
     DropdownArrow.TextSize = 10
     DropdownArrow.Font = Enum.Font.GothamMedium
@@ -813,30 +626,9 @@ function Robox:AddDropdown(parent, config)
         OptionCorner.CornerRadius = UDim.new(0, 6)
         OptionCorner.Parent = OptionButton
         
-        local OptionIndicator = Instance.new("Frame")
-        OptionIndicator.Name = "OptionIndicator"
-        OptionIndicator.Size = UDim2.new(0, 3, 0, optionStr == selectedValue and 16 or 0)
-        OptionIndicator.Position = UDim2.new(0, 0, 0.5, 0)
-        OptionIndicator.AnchorPoint = Vector2.new(0, 0.5)
-        OptionIndicator.BackgroundColor3 = self.Theme.Accent
-        OptionIndicator.BorderSizePixel = 0
-        OptionIndicator.Parent = OptionButton
-        
-        local OptionIndicatorCorner = Instance.new("UICorner")
-        OptionIndicatorCorner.CornerRadius = UDim.new(0, 2)
-        OptionIndicatorCorner.Parent = OptionIndicator
-        
-        local OptionIcon = Instance.new("ImageLabel")
-        OptionIcon.Size = UDim2.new(0, 16, 0, 16)
-        OptionIcon.Position = UDim2.new(0, 10, 0.5, -8)
-        OptionIcon.BackgroundTransparency = 1
-        OptionIcon.Image = "rbxassetid://85396524006943"
-        OptionIcon.ImageColor3 = self.Theme.TextSecondary
-        OptionIcon.Parent = OptionButton
-        
         local OptionLabel = Instance.new("TextLabel")
-        OptionLabel.Size = UDim2.new(1, -36, 1, 0)
-        OptionLabel.Position = UDim2.new(0, 30, 0, 0)
+        OptionLabel.Size = UDim2.new(1, -16, 1, 0)
+        OptionLabel.Position = UDim2.new(0, 8, 0, 0)
         OptionLabel.BackgroundTransparency = 1
         OptionLabel.Text = optionStr
         OptionLabel.TextColor3 = self.Theme.Text
@@ -852,9 +644,6 @@ function Robox:AddDropdown(parent, config)
             TweenService:Create(OptionLabel, TweenInfo.new(0.15), {
                 TextColor3 = Color3.fromRGB(255, 255, 255)
             }):Play()
-            TweenService:Create(OptionIcon, TweenInfo.new(0.15), {
-                ImageColor3 = Color3.fromRGB(255, 255, 255)
-            }):Play()
         end)
         
         OptionButton.MouseLeave:Connect(function()
@@ -864,29 +653,11 @@ function Robox:AddDropdown(parent, config)
             TweenService:Create(OptionLabel, TweenInfo.new(0.15), {
                 TextColor3 = self.Theme.Text
             }):Play()
-            TweenService:Create(OptionIcon, TweenInfo.new(0.15), {
-                ImageColor3 = self.Theme.TextSecondary
-            }):Play()
         end)
         
         OptionButton.MouseButton1Click:Connect(function()
             selectedValue = optionStr
             DropdownValue.Text = optionStr
-            
-            for _, child in ipairs(DropdownList:GetChildren()) do
-                if child:IsA("TextButton") then
-                    local indicator = child:FindFirstChild("OptionIndicator")
-                    if indicator then
-                        TweenService:Create(indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                            Size = UDim2.new(0, 3, 0, 0)
-                        }):Play()
-                    end
-                end
-            end
-            
-            TweenService:Create(OptionIndicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                Size = UDim2.new(0, 3, 0, 16)
-            }):Play()
             
             if config.Callback then
                 pcall(function()
@@ -929,22 +700,6 @@ function Robox:AddDropdown(parent, config)
             local valueStr = tostring(value)
             selectedValue = valueStr
             DropdownValue.Text = valueStr
-            
-            for _, child in ipairs(DropdownList:GetChildren()) do
-                if child:IsA("TextButton") then
-                    local indicator = child:FindFirstChild("OptionIndicator")
-                    local label = child:FindFirstChildOfClass("TextLabel")
-                    if indicator and label and label.Text == valueStr then
-                        TweenService:Create(indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                            Size = UDim2.new(0, 3, 0, 16)
-                        }):Play()
-                    elseif indicator then
-                        TweenService:Create(indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                            Size = UDim2.new(0, 3, 0, 0)
-                        }):Play()
-                    end
-                end
-            end
             
             if config.Callback then
                 pcall(function()
@@ -1105,7 +860,6 @@ end
 function Robox:Notify(config)
     local notifTitle = tostring(config.Title or "Notification")
     local notifText = tostring(config.Text or "")
-    local notifIcon = tostring(config.Icon or "rbxassetid://99485429958746")
     local notifDuration = tonumber(config.Duration) or 3
     
     local NotificationFrame = Instance.new("Frame")
@@ -1127,17 +881,9 @@ function Robox:Notify(config)
     NotifStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     NotifStroke.Parent = NotificationFrame
     
-    local NotifIcon = Instance.new("ImageLabel")
-    NotifIcon.Size = UDim2.new(0, 20, 0, 20)
-    NotifIcon.Position = UDim2.new(0, 12, 0, 10)
-    NotifIcon.BackgroundTransparency = 1
-    NotifIcon.Image = notifIcon
-    NotifIcon.ImageColor3 = self.Theme.Accent
-    NotifIcon.Parent = NotificationFrame
-    
     local NotifTitle = Instance.new("TextLabel")
-    NotifTitle.Size = UDim2.new(1, -45, 0, 18)
-    NotifTitle.Position = UDim2.new(0, 38, 0, 10)
+    NotifTitle.Size = UDim2.new(1, -16, 0, 18)
+    NotifTitle.Position = UDim2.new(0, 8, 0, 10)
     NotifTitle.BackgroundTransparency = 1
     NotifTitle.Text = notifTitle
     NotifTitle.TextColor3 = self.Theme.Text
@@ -1147,8 +893,8 @@ function Robox:Notify(config)
     NotifTitle.Parent = NotificationFrame
     
     local NotifText = Instance.new("TextLabel")
-    NotifText.Size = UDim2.new(1, -25, 0, 0)
-    NotifText.Position = UDim2.new(0, 12, 0, 32)
+    NotifText.Size = UDim2.new(1, -16, 0, 0)
+    NotifText.Position = UDim2.new(0, 8, 0, 32)
     NotifText.BackgroundTransparency = 1
     NotifText.Text = notifText
     NotifText.TextColor3 = self.Theme.TextSecondary
@@ -1163,11 +909,11 @@ function Robox:Notify(config)
         notifText,
         11,
         Enum.Font.Gotham,
-        Vector2.new(255, math.huge)
+        Vector2.new(264, math.huge)
     )
     
     local totalHeight = 46 + textBounds.Y
-    NotifText.Size = UDim2.new(1, -25, 0, textBounds.Y)
+    NotifText.Size = UDim2.new(1, -16, 0, textBounds.Y)
     
     local LoadingBar = Instance.new("Frame")
     LoadingBar.Name = "LoadingBar"
