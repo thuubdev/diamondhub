@@ -4,4 +4,4 @@
 
 - All enhancements and improvements will be shown here.
 
-- https://discord.gg/8ShddDK5
+- https://discord.gg/YKAWnHKJGW
